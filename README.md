@@ -25,3 +25,5 @@ This repository contains my solutions to exercises and problems from the classic
 - Some problems may have multiple solution approaches
 - Code includes comments where necessary for clarification
 - All solutions tested with the latest stable version of Go
+
+⭐ If this project was useful, give a star to the repository.
