@@ -27,6 +27,6 @@ This repository contains my solutions to exercises and problems from the classic
 - All solutions tested with the latest stable version of Go
 
 ## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GPL License - see the LICENSE file for details.
 
 ⭐ If this project was useful, give a star to the repository.
