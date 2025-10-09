@@ -6,3 +6,4 @@ world
 king
 king
 apple
+orange
