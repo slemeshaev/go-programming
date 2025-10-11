@@ -7,59 +7,58 @@ import (
 	"os"
 )
 
-type FileData struct {
-	counts map[string]int
-	files  map[string][]string
-}
-
-func NewFileData() *FileData {
-	return &FileData{
-		counts: make(map[string]int),
-		files:  make(map[string][]string),
-	}
-}
-
-func (data *FileData) findDuplicates(f *os.File, filename string) {
-	input := bufio.NewScanner(f)
-	for input.Scan() {
-		line := input.Text()
-		data.counts[line]++
-
-		exists := false
-		for _, existingFile := range data.files[line] {
-			if existingFile == filename {
-				exists = true
-				break
-			}
-		}
-
-		if !exists {
-			data.files[line] = append(data.files[line], filename)
-		}
-	}
-}
-
 func main() {
-	fileData := NewFileData()
+	filesWithDups := make(map[string]bool)
 	files := os.Args[1:]
 
 	if len(files) == 0 {
-		fileData.findDuplicates(os.Stdin, "stdin")
+		hasDup, err := hasDuplicates(os.Stdin)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "reading error stdin:%v\n", err)
+			return
+		}
+
+		if hasDup {
+			fmt.Println("stdin")
+		}
 	} else {
 		for _, arg := range files {
 			f, err := os.Open(arg)
+
+			hasDup, err := hasDuplicates(f)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "ex1_4: %v\n", err)
 				continue
 			}
-			fileData.findDuplicates(f, arg)
+
+			if hasDup {
+				filesWithDups[arg] = true
+			}
+
 			f.Close()
 		}
 	}
 
-	for line, n := range fileData.counts {
-		if n > 1 {
-			fmt.Printf("%d\t%s\t%v\n", n, line, fileData.files[line])
+	for filename := range filesWithDups {
+		fmt.Println(filename)
+	}
+}
+
+func hasDuplicates(f *os.File) (bool, error) {
+	counts := make(map[string]int)
+	input := bufio.NewScanner(f)
+
+	for input.Scan() {
+		line := input.Text()
+		counts[line]++
+		if counts[line] > 1 {
+			return true, nil
 		}
 	}
+
+	if err := input.Err(); err != nil {
+		return false, err
+	}
+
+	return false, nil
 }
