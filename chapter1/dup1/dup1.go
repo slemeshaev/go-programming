@@ -17,7 +17,11 @@ func main() {
 		counts[input.Text()]++
 	}
 
-	// NOTE: ignoring potential errors from input.Err()
+	if err := input.Err(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading input:%v\n", err)
+		os.Exit(1)
+	}
+
 	for line, n := range counts {
 		if n > 1 {
 			fmt.Printf("%s\t%d\n", line, n)
