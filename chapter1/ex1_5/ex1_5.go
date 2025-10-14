@@ -53,7 +53,7 @@ func oscillograph(out io.Writer) error {
 	)
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	freq := r.Float64() * 3.0 // relative frequency of y oscillator
+	freq := r.Float64() * 1000.0 // relative frequency of y oscillator
 	anim := gif.GIF{LoopCount: nframes}
 	phase := 0.0
 
@@ -61,9 +61,10 @@ func oscillograph(out io.Writer) error {
 		rect := image.Rect(0, 0, 2*size+1, 2*size+1)
 		img := image.NewPaletted(rect, palette)
 
-		for t := 0.0; t < cycles*2*math.Pi; t += res {
-			x := math.Sin(t)
+		for t := -cycles * 2 * math.Pi; t < cycles*2*math.Pi; t += res {
+			x := t * float64(size) / cycles
 			y := math.Sin(t*freq + phase)
+
 			img.SetColorIndex(size+int(x*size+0.5), size+int(y*size+0.5), greenIndex)
 		}
 
