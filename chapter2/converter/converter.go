@@ -68,3 +68,23 @@ func MToF(m Meters) Feet {
 func FToM(f Feet) Meters {
 	return Meters(f / 3.28084)
 }
+
+// Weight types and conversions
+type Kilograms float64
+type Pounds float64
+
+func (k Kilograms) String() string {
+	return fmt.Sprintf("%.2fkg", k)
+}
+
+func (p Pounds) String() string {
+	return fmt.Sprintf("%.2flb", p)
+}
+
+func KToP(k Kilograms) Pounds {
+	return Pounds(k * 2.20462)
+}
+
+func PToK(p Pounds) Kilograms {
+	return Kilograms(p / 2.20462)
+}
