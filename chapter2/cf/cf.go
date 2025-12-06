@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"tempconv/chapter2/converter"
 	"tempconv/chapter2/tempconv"
 )
 
@@ -18,6 +19,12 @@ func main() {
 
 		f := tempconv.Fahrenheit(t)
 		c := tempconv.Celsius(t)
+
 		fmt.Printf("%s = %s, %s = %s\n", f, tempconv.FToC(f), c, tempconv.CToF(c))
+
+		m := converter.Meters(t)
+		ft := converter.Feet(t)
+
+		fmt.Printf("%s = %s, %s = %s\n", m, converter.MToF(m), ft, converter.FToM(ft))
 	}
 }
