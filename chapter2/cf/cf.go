@@ -26,5 +26,10 @@ func main() {
 		ft := converter.Feet(t)
 
 		fmt.Printf("%s = %s, %s = %s\n", m, converter.MToF(m), ft, converter.FToM(ft))
+
+		k := converter.Kilograms(t)
+		p := converter.Pounds(t)
+
+		fmt.Printf("%s = %s, %s = %s\n", k, converter.KToP(k), p, converter.PToK(p))
 	}
 }
