@@ -13,6 +13,16 @@ func area() {
 	fmt.Println(f) // "f"; local var f shadows package-level func f
 	fmt.Println(g) // "g"; package-level var
 	// fmt.Println(h) // compile error: undefined: h
+
+	if x := f(); x == 0 {
+		fmt.Println(x)
+	} else if y := g(x); x == y {
+		fmt.Println(x, y)
+	} else {
+		fmt.Println(x, y)
+	}
+
+	fmt.Println(x, y) // compile error: x and y are not visible here
 }
 
 // shadow
