@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func f() {}
 
@@ -38,6 +40,17 @@ func shadow() {
 		}
 	}
 }
+
+/*
+var cwd string
+
+func init() {
+	cwd, err := os.Getwd() // compile error: unused: cwd
+
+	if err != nil {
+		log.Fatalf("Ошибка")
+	}
+}*/
 
 func main() {
 	area()
