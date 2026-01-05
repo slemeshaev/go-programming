@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 )
 
 func f() {}
@@ -41,16 +43,16 @@ func shadow() {
 	}
 }
 
-/*
 var cwd string
 
 func init() {
-	cwd, err := os.Getwd() // compile error: unused: cwd
+	var err error
+	cwd, err = os.Getwd() // compile error: unused: cwd
 
 	if err != nil {
 		log.Fatalf("os.Getwd failed: %v", err)
 	}
-}*/
+}
 
 func main() {
 	area()
