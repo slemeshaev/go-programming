@@ -48,7 +48,7 @@ func init() {
 	cwd, err := os.Getwd() // compile error: unused: cwd
 
 	if err != nil {
-		log.Fatalf("Ошибка")
+		log.Fatalf("os.Getwd failed: %v", err)
 	}
 }*/
 
