@@ -28,4 +28,9 @@ func main() {
 
 	fmt.Printf("%08b\n", x<<1) // "01000100", the set {2, 6}
 	fmt.Printf("%08b\n", x>>1) // "000010001", the set {0, 4}
+
+	medals := []string{"золото", "серебро", "бронза"}
+	for i := len(medals) - 1; i >= 0; i-- {
+		fmt.Println(medals[i]) // "бронза", "серебро", "золото"
+	}
 }
