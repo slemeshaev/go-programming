@@ -33,4 +33,10 @@ func main() {
 	for i := len(medals) - 1; i >= 0; i-- {
 		fmt.Println(medals[i]) // "бронза", "серебро", "золото"
 	}
+
+	// система счисления
+	oct := 0666
+	fmt.Printf("%d %[1]o %#[1]o\n", oct) // 438 666 0666
+	hex := int64(0xdeadbeef)
+	fmt.Printf("%d %[1]x %#[1]x %#[1]X\n", hex) // 3735928559 deadbeef 0xdeadbeef 0XDEADBEEF
 }
