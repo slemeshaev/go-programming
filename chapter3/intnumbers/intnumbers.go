@@ -29,12 +29,12 @@ func main() {
 	fmt.Printf("%08b\n", x<<1) // "01000100", the set {2, 6}
 	fmt.Printf("%08b\n", x>>1) // "000010001", the set {0, 4}
 
-	medals := []string{"золото", "серебро", "бронза"}
+	medals := []string{"gold", "silver", "bronze"}
 	for i := len(medals) - 1; i >= 0; i-- {
-		fmt.Println(medals[i]) // "бронза", "серебро", "золото"
+		fmt.Println(medals[i]) // "bronze", "silver", "gold"
 	}
 
-	// система счисления
+	// numeral system
 	oct := 0666
 	fmt.Printf("%d %[1]o %#[1]o\n", oct) // 438 666 0666
 	hex := int64(0xdeadbeef)
