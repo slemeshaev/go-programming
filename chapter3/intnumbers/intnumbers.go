@@ -39,4 +39,13 @@ func main() {
 	fmt.Printf("%d %[1]o %#[1]o\n", oct) // 438 666 0666
 	hex := int64(0xdeadbeef)
 	fmt.Printf("%d %[1]x %#[1]x %#[1]X\n", hex) // 3735928559 deadbeef 0xdeadbeef 0XDEADBEEF
+
+	// runes
+	ascii := 'a'
+	unicode := '⋆'
+	newline := '\n'
+
+	fmt.Printf("%d %[1]c %[1]q\n", ascii)
+	fmt.Printf("%d %[1]c %[1]q\n", unicode)
+	fmt.Printf("%d %[1]q\n", newline)
 }
