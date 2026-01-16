@@ -1,4 +1,4 @@
-// Surface вычисляет SVG-представление трехмерного графика функции
+// Surface computes an SVG rendering of a 3D surface function
 package main
 
 import (
@@ -7,18 +7,18 @@ import (
 )
 
 const (
-	width, height = 600, 300            // размер канвы в пикселях
-	cells         = 100                 // количество ячеек сетки
-	xyrange       = 30                  // диапазон (-xyrange..+xyrange)
-	xyscale       = width / 2 / xyrange // пикселей в единице x или y
-	zscale        = height * 0.4        // пикселей в единице z
-	angle         = math.Pi / 6         // углы осей x, y (=30*)
+	width, height = 600, 320            // canvas size in pixels
+	cells         = 100                 // number of grid cells
+	xyrange       = 30.0                // axis ranges (-xyrange..+xyrange)
+	xyscale       = width / 2 / xyrange // pixels per x or y unit
+	zscale        = height * 0.4        // pixels per z unit
+	angle         = math.Pi / 6         // angle of x, y axes (=30°)
 )
 
-var sin30, cos30 = math.Sin(angle), math.Cos(angle) // sin(30*), cos(30*)
+var sin30, cos30 = math.Sin(angle), math.Cos(angle) // sin(30°), cos(30°)
 
 func main() {
-	fmt.Printf("<svg xmlns='http://wwww.w3.org/2000/svg' "+
+	fmt.Printf("<svg xmlns='http://www.w3.org/2000/svg' "+
 		"style='stroke:grey; fill: white; stroke-width: 0.7' "+
 		"width='%d' height='%d'>", width, height)
 	for i := 0; i < cells; i++ {
@@ -27,7 +27,8 @@ func main() {
 			bx, by := corner(i, j)
 			cx, cy := corner(i, j+1)
 			dx, dy := corner(i+1, j+1)
-			fmt.Printf("<polygon points='%g, %g, %g, %g, %g, %g, %g, %g'/>\n", ax, ay, bx, by, cx, cy, dx, dy)
+			fmt.Printf("<polygon points='%g, %g, %g, %g, %g, %g, %g, %g'/>\n",
+				ax, ay, bx, by, cx, cy, dx, dy)
 		}
 	}
 
@@ -35,18 +36,21 @@ func main() {
 }
 
 func corner(i, j int) (float64, float64) {
-	// ищем угловую точку (x, y) ячейки (i, j)
+	// find point (x, y) at corner of cell (i, j)
 	x := xyrange * (float64(i)/cells - 0.5)
 	y := xyrange * (float64(j)/cells - 0.5)
-	// вычисялем высоту поверхности z
+
+	// compute surface height z
 	z := f(x, y)
-	// изметрически проецируем (x, y, z) на двумерную канву SVG (sx, sy)
+
+	// project (x, y, z) isometrically onto 2D SVG canvas (sx, sy)
 	sx := width/2 + (x-y)*cos30*xyscale
 	sy := height/2 + (x+y)*sin30*xyscale - z*zscale
+
 	return sx, sy
 }
 
 func f(x, y float64) float64 {
-	r := math.Hypot(x, y) // расстояние от (0, 0)
+	r := math.Hypot(x, y) // distance from (0, 0)
 	return math.Sin(r) / r
 }
