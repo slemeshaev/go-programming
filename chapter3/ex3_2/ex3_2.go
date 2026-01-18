@@ -1,5 +1,5 @@
 // Exercise 3.2: Experiment with visulizations of other functions from
-//  the math package. Can you produce an egg box, moguls, or a saddle?
+// the math package. Can you produce an egg box, moguls, or a saddle?
 
 // Surface computes an SVG rendering of a 3D surface function
 package main
