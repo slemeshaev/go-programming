@@ -75,5 +75,7 @@ func f(x, y float64) float64 {
 	// 2. Muguls (Sinusoidal hills)
 	// return math.Sin(x) * math.Cos(y)
 	// 3. Haddle (Hyperbolic parabaloid)
-	return (x*x - y*y) * 0.05
+	// return (x*x - y*y) * 0.05
+	// 4. Multiple Peaks
+	return math.Sin(x/2)*math.Cos(y/2) + 0.5*math.Sin(x/5)*math.Cos(y/5)
 }
