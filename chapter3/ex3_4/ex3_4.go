@@ -14,21 +14,35 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
+	"net/http"
 )
 
 const (
-	width, height = 600, 320            // canvas size in pixels
-	cells         = 100                 // number of grid cells
-	xyrange       = 30.0                // axis ranges (-xyrange..+xyrange)
-	xyscale       = width / 2 / xyrange // pixels per x or y unit
-	zscale        = height * 0.4        // pixels per z unit
-	angle         = math.Pi / 6         // angle of x, y axes (=30°)
+	defaultWidth, defaultHeight = 600, 320    // canvas size in pixels
+	defaultCells                = 100         // number of grid cells
+	defaultXyrange              = 30.0        // axis ranges (-xyrange..+xyrange)
+	defaultAngle                = math.Pi / 6 // angle of x, y axes (=30°)
 )
 
-var sin30, cos30 = math.Sin(angle), math.Cos(angle) // sin(30°), cos(30°)
+var sin30, cos30 = math.Sin(defaultAngle), math.Cos(defaultAngle) // sin(30°), cos(30°)
 
 func main() {
+	http.HandleFunc("/", handler)
+	log.Fatal(http.ListenAndServe("localhost:8000", nil))
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	// parse query parameters
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// get parameters or use defaults
+	// you need write get parameters
+
 	fmt.Printf("<svg xmlns='http://www.w3.org/2000/svg' "+
 		"style='stroke:grey; fill: white; stroke-width: 0.7' "+
 		"width='%d' height='%d'>", width, height)
