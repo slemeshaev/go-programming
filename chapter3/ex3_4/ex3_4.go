@@ -17,6 +17,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"strconv"
 )
 
 const (
@@ -41,7 +42,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get parameters or use defaults
-	// you need write get parameters
+	width := getIntParam(r, "width", defaultWidth)
+	height := getIntParam(r, "height", defaultHeight)
+	cells := getIntParam(r, "cells", defaultCells)
+	xyrange := getFloatParam(r, "xyrange", defaultXyrange)
+	color := r.FormValue("color")
+	if color == "" {
+		color = "height" // default to height-based coloring
+	}
+
+	// Calculate derived constants
+	// you need to implement
 
 	fmt.Printf("<svg xmlns='http://www.w3.org/2000/svg' "+
 		"style='stroke:grey; fill: white; stroke-width: 0.7' "+
@@ -134,4 +145,18 @@ func corner(i, j int) (float64, float64, bool) {
 func f(x, y float64) float64 {
 	// Multiple Peaks
 	return math.Sin(x/2)*math.Cos(y/2) + 0.5*math.Sin(x/5)*math.Cos(y/5)
+}
+
+func getIntParam(r *http.Request, name string, defaultValue int) int {
+	value := r.FormValue(name)
+	if value == "" {
+		return defaultValue
+	}
+
+	intValue, err := strconv.Atoi(value)
+	if err != nil || intValue <= 0 {
+		return defaultValue
+	}
+
+	return intValue
 }
