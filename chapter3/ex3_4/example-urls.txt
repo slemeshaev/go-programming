@@ -1,0 +1,30 @@
+Example URLs:
+Default parameters:
+http://localhost:8000/
+
+Custom size:
+http://localhost:8000/?width=800&height=600
+
+Custom cells (resolution):
+http://localhost:8000/?cells=50
+
+http://localhost:8000/?cells=150
+
+Custom xyrange (zooming):
+http://localhost:8000/?xyrange=15.0 (zoomed in)
+
+http://localhost:8000/?xyrange=60.0 (zoomed out)
+
+Custom colors:
+http://localhost:8000/?color=red
+
+http://localhost:8000/?color=blue
+
+http://localhost:8000/?color=green
+
+http://localhost:8000/?color=height (height-based gradient - default)
+
+http://localhost:8000/?color=%23ff00ff (hex color code)
+
+Combined parameters:
+http://localhost:8000/?width=800&height=600&cells=120&xyrange=40&color=orange
