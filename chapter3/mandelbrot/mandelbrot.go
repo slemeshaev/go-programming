@@ -1,4 +1,4 @@
-// Mandelbrot создает PNG-изображение фрактала Мандельброта.
+// Mandelbrot emits a PNG of the Mandelbrot fractal.
 package main
 
 import (
@@ -21,11 +21,11 @@ func main() {
 		for px := 0; px < width; px++ {
 			x := float64(px)/width*(xmax-xmin) + xmin
 			z := complex(x, y)
-			// точка (px, py) представляет комплексное значение z.
+			// image point (px, py) represents complex value z
 			img.Set(px, py, mandelbrot(z))
 		}
 	}
-	png.Encode(os.Stdout, img) // примечание: игнорируем ошибки
+	png.Encode(os.Stdout, img) // NOTE: ignoring errors
 }
 
 func mandelbrot(z complex128) color.Color {
