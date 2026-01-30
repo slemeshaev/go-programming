@@ -31,7 +31,7 @@ func main() {
 					sy := float64(py) + float64(subpy)/2
 
 					x := sx/width*(xmax-xmin) + xmin
-					y := sy/height*(ymax-уmin) + ymin
+					y := sy/height*(ymax-ymin) + ymin
 
 					z := complex(x, y)
 					colors = append(colors, mandelbrot(z))
@@ -42,6 +42,26 @@ func main() {
 		}
 	}
 	png.Encode(os.Stdout, img) // NOTE: ignoring errors
+}
+
+func averageColor(colors []color.Color) color.Color {
+	var r, g, b, a uint32
+	n := len(colors)
+
+	for _, c := range colors {
+		cr, cg, cb, ca := c.RGBA()
+		r += cr
+		g += cg
+		b += cb
+		a += ca
+	}
+
+	return color.RGBA{
+		uint8((r / uint32(n)) >> 8),
+		uint8((g / uint32(n)) >> 8),
+		uint8((b / uint32(n)) >> 8),
+		uint8((a / uint32(n)) >> 8),
+	}
 }
 
 func mandelbrot(z complex128) color.Color {
