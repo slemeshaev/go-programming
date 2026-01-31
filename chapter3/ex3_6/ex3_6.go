@@ -45,22 +45,22 @@ func main() {
 }
 
 func averageColor(colors []color.Color) color.Color {
-	var r, g, b, a uint32
-	n := len(colors)
+	var totalR, totalG, totalB uint32
 
 	for _, c := range colors {
-		cr, cg, cb, ca := c.RGBA()
-		r += cr
-		g += cg
-		b += cb
-		a += ca
+		r, g, b, _ := c.RGBA()
+		totalR += r
+		totalG += g
+		totalB += b
 	}
 
+	n := uint32(len(colors))
+
 	return color.RGBA{
-		uint8((r / uint32(n)) >> 8),
-		uint8((g / uint32(n)) >> 8),
-		uint8((b / uint32(n)) >> 8),
-		uint8((a / uint32(n)) >> 8),
+		uint8((totalR / n) >> 8),
+		uint8((totalG / n) >> 8),
+		uint8((totalB / n) >> 8),
+		255,
 	}
 }
 
