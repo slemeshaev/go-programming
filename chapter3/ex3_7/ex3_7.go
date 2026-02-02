@@ -7,8 +7,10 @@
 package main
 
 import (
-	"fmt"
+	"image"
 	"image/color"
+	"image/png"
+	"os"
 )
 
 func main() {
@@ -36,5 +38,42 @@ func main() {
 		{255, 255, 50, 255}, // yellow for -i
 	}
 
-	fmt.Println(roots, rootColors)
+	img := image.NewRGBA(image.Rect(0, 0, width, height))
+
+	for py := 0; py < height; py++ {
+		for px := 0; px < width; px++ {
+			// supersampling: average colors from subpixels
+			var r, g, b uint32
+
+			for sy := 0; sy < supersample; sy++ {
+				for sx := 0; sx < supersample; sx++ {
+					// subpixel coordinates with jitter for better sampling
+					sxPos := float64(px) + (float64(sx)+0.5)/float64(supersample)
+					syPos := float64(py) + (float64(sy)+0.5)/float64(supersample)
+
+					// map to complex plane
+					x := sxPos/float64(width)*(xmax-xmin) + xmin
+					y := syPos/float64(height)*(ymax-ymin) + ymin
+
+					// compute color for this subpixel
+					cr, cg, cb := newton(complex(x, y), roots, rootColors, maxIter, tolerance)
+
+					r += uint32(cr)
+					g += uint32(cg)
+					b += uint32(cb)
+				}
+			}
+
+			// average the colors
+			samples := supersample * supersample
+			img.Set(px, py, color.RGBA{
+				uint8(r / uint32(samples)),
+				uint8(g / uint32(samples)),
+				uint8(b / uint32(samples)),
+				255,
+			})
+		}
+	}
+
+	png.Encode(os.Stdout, img)
 }
