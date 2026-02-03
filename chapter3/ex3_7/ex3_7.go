@@ -107,3 +107,23 @@ func newton(z complex128, roots []complex128, rootColors []color.RGBA, maxIter i
 	// black for points that don't converge
 	return 0, 0, 0
 }
+
+// shadeColor creates a gradient based on iteration count and position
+func shadeColor(base color.RGBA, iter, maxIter int, z complex128) (r, g, b uint8) {
+	// smooth gradient from dark to light based on iterations
+	t := float64(iter) / float64(maxIter)
+
+	// Three different shading effects combined:
+	// 1. Brightness based on iterations (faster convergence = brighter)
+	brightness := 0.4 + 0.6*(1-t)
+
+	// 2. Subtle texture based on initial position
+	texture := 0.95 + 0.05*real(z)*imag(z)
+
+	// 3. Slight hue variation for visual interest
+	hueShift := 0.1 * t
+
+	return uint8(float64(base.R) * brightness * texture * (1 - hueShift)),
+		uint8(float64(base.G) * brightness * texture),
+		uint8(float64(base.B) * brightness * texture * (1 - hueShift))
+}
