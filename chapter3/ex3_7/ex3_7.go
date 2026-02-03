@@ -10,6 +10,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"math/cmplx"
 	"os"
 )
 
@@ -76,4 +77,33 @@ func main() {
 	}
 
 	png.Encode(os.Stdout, img)
+}
+
+// newton returns the color for a point in the complex plane
+func newton(z complex128, roots []complex128, rootColors []color.RGBA, maxIter int, tolerance float64) (r, g, b uint8) {
+	originalZ := z
+
+	for iter := 0; iter < maxIter; iter++ {
+		// Newton's method iteration: z = z - f(z) / f'(z)
+		// for f(z) = z^4 - 1, f'(z) = 4z^3
+		fz := z*z*z*z - 1
+		dfz := 4 * z * z * z
+
+		if cmplx.Abs(dfz) < 1e-12 {
+			break // avoid division by zero
+		}
+
+		z = z - fz/dfz
+
+		// check convergence to any root
+		for i, root := range roots {
+			if cmplx.Abs(z-root) < tolerance {
+				// color based on root and number of iterations
+				return shadeColor(rootColors[i], iter, maxIter, originalZ)
+			}
+		}
+	}
+
+	// black for points that don't converge
+	return 0, 0, 0
 }
