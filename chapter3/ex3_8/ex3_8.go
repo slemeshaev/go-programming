@@ -20,7 +20,35 @@ func main() {
 	// Implementation
 }
 
-// 1. complex64
+// 1. complex128 (from book)
+func render128() *image.RGBA {
+	const size = 256
+	img := image.NewRGBA(image.Rect(0, 0, size, size))
+
+	for y := 0; y < size; y++ {
+		for x := 0; x < size; x++ {
+			cx := float64(x)/size*4 - 2
+			cy := float64(y)/size*4 - 2
+			img.Set(x, y, mandel128(complex(cx, cy)))
+		}
+	}
+
+	return img
+}
+
+func mandel128(c complex128) color.Color {
+	var z complex128
+	for n := 0; n < 100; n++ {
+		z = z*z + c
+		if real(z)*real(z)+imag(z)*imag(z) > 4 {
+			return color.Gray{255 - uint8(n*2)}
+		}
+	}
+
+	return color.Black
+}
+
+// 2. complex64
 func render64() *image.RGBA {
 	const size = 256
 	img := image.NewRGBA(image.Rect(0, 0, size, size))
