@@ -10,6 +10,7 @@ package main
 import (
 	"image"
 	"image/color"
+	"math/big"
 )
 
 func main() {
@@ -66,6 +67,44 @@ func mandel64(c complex64) color.Color {
 		if real(z)*real(z)+imag(z)*imag(z) > 4 {
 			return color.Gray{255 - uint8(n*2)}
 		}
+	}
+	return color.Black
+}
+
+// 3. big.Float
+func renderFloat() *image.RGBA {
+	const size = 256
+	img := image.NewRGBA(image.Rect(0, 0, size, size))
+
+	for y := 0; y < size; y++ {
+		for x := 0; x < size; x++ {
+			cx := big.NewFloat(float64(x)/size*4 - 2)
+			cy := big.NewFloat(float64(y)/size*4 - 2)
+			img.Set(x, y, mandelFloat(cx, cy))
+		}
+	}
+
+	return img
+}
+
+func mandelFloat(cx, cy *big.Float) color.Color {
+	zx, zy := new(big.Float), new(big.Float)
+
+	for n := 0; n < 100; n++ {
+		// z = z*z + c
+		x2 := new(big.Float).Mul(zx, zx)
+		y2 := new(big.Float).Mul(zy, zy)
+		xy2 := new(big.Float).Mul(zx, zy)
+		xy2.Add(xy2, xy2)
+
+		// check if escaped
+		r2 := new(big.Float).Add(x2, y2)
+		if r2.Cmp(big.NewFloat(4)) > 0 {
+			return color.Gray{255 - uint8(n*2)}
+		}
+
+		zx.Sub(x2, y2).Add(zx, cx)
+		zy.Add(xy2, cy)
 	}
 	return color.Black
 }
