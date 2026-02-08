@@ -10,7 +10,10 @@ package main
 import (
 	"image"
 	"image/color"
+	"image/png"
+	"log"
 	"math/big"
+	"os"
 )
 
 func main() {
@@ -147,4 +150,14 @@ func mandelRat(cx, cy *big.Rat) color.Color {
 	}
 
 	return color.Black
+}
+
+func save(filnename string, img image.Image) {
+	f, err := os.Create(filnename)
+	if err != nil {
+		log.Fatalf("Failed to open file: %v", f)
+	}
+
+	defer f.Close()
+	png.Encode(f, img)
 }
