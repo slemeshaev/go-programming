@@ -106,5 +106,45 @@ func mandelFloat(cx, cy *big.Float) color.Color {
 		zx.Sub(x2, y2).Add(zx, cx)
 		zy.Add(xy2, cy)
 	}
+
+	return color.Black
+}
+
+// 4. big.Rat
+func renderRat() *image.RGBA {
+	const size = 256
+	img := image.NewRGBA(image.Rect(0, 0, size, size))
+
+	for y := 0; y < size; y++ {
+		for x := 0; x < size; x++ {
+			cx := big.NewRat(int64(x)*4-int64(size)*2, int64(size))
+			cy := big.NewRat(int64(y)*4-int64(size)*2, int64(size))
+			img.Set(x, y, mandelRat(cx, cy))
+		}
+	}
+
+	return img
+}
+
+func mandelRat(cx, cy *big.Rat) color.Color {
+	zx, zy := new(big.Rat), new(big.Rat)
+
+	for n := 0; n < 100; n++ {
+		// z = z*z + c
+		x2 := new(big.Rat).Mul(zx, zx)
+		y2 := new(big.Rat).Mul(zy, zy)
+		xy2 := new(big.Rat).Mul(zx, zy)
+		xy2.Add(xy2, xy2)
+
+		// check if escaped
+		r2 := new(big.Rat).Add(x2, y2)
+		if r2.Cmp(big.NewRat(4, 1)) > 0 {
+			return color.Gray{255 - uint8(n*2)}
+		}
+
+		zx.Sub(x2, y2).Add(zx, cx)
+		zy.Add(xy2, cy)
+	}
+
 	return color.Black
 }
