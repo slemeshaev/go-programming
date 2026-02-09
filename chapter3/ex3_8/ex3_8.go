@@ -8,16 +8,34 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
 	"log"
 	"math/big"
 	"os"
+	"time"
 )
 
 func main() {
-	// Implementation
+	// compare performance
+	methods := []struct {
+		name string
+		fn   func() *image.RGBA
+	}{
+		{"complex128", render128},
+		{"complex64", render64},
+		{"big.Float", renderFloat},
+		{"big.Rat", renderRat},
+	}
+
+	for _, m := range methods {
+		start := time.Now()
+		img := m.fn()
+		save(m.name+".png", img)
+		fmt.Printf("%s: %v\n", m.name, time.Since(start))
+	}
 }
 
 // 1. complex128 (from book)
