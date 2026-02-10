@@ -133,38 +133,58 @@ func mandelFloat(cx, cy *big.Float) color.Color {
 
 // 4. big.Rat
 func renderRat() *image.RGBA {
-	const size = 256
+	const size = 64
 	img := image.NewRGBA(image.Rect(0, 0, size, size))
 
+	fmt.Fprint(os.Stderr, "big.Rat (slow, but it works): ")
+
+	denom := big.NewInt(int64(size))
+
 	for y := 0; y < size; y++ {
+		if y%8 == 0 {
+			fmt.Fprintf(os.Stderr, "%d%% ", y*100/size)
+		}
+
+		numY := big.NewInt(int64(y)*4 - int64(size)*2)
+		cy := new(big.Rat).SetFrac(numY, denom)
+
 		for x := 0; x < size; x++ {
-			cx := big.NewRat(int64(x)*4-int64(size)*2, int64(size))
-			cy := big.NewRat(int64(y)*4-int64(size)*2, int64(size))
+			numX := big.NewInt(int64(x)*4 - int64(size)*2)
+			cx := new(big.Rat).SetFrac(numX, denom)
+
 			img.Set(x, y, mandelRat(cx, cy))
 		}
 	}
 
+	fmt.Fprintln(os.Stderr, "100%")
 	return img
 }
 
 func mandelRat(cx, cy *big.Rat) color.Color {
 	zx, zy := new(big.Rat), new(big.Rat)
 
-	for n := 0; n < 100; n++ {
-		// z = z*z + c
-		x2 := new(big.Rat).Mul(zx, zx)
-		y2 := new(big.Rat).Mul(zy, zy)
-		xy2 := new(big.Rat).Mul(zx, zy)
-		xy2.Add(xy2, xy2)
+	const maxIter = 15
 
-		// check if escaped
-		r2 := new(big.Rat).Add(x2, y2)
-		if r2.Cmp(big.NewRat(4, 1)) > 0 {
-			return color.Gray{255 - uint8(n*2)}
+	for n := 0; n < maxIter; n++ {
+		absX := new(big.Rat).Abs(zx)
+		absY := new(big.Rat).Abs(zy)
+		if absX.Cmp(big.NewRat(2, 1)) > 0 || absY.Cmp(big.NewRat(2, 1)) > 0 {
+			return color.Gray{255 - uint8(n*17)}
 		}
 
-		zx.Sub(x2, y2).Add(zx, cx)
-		zy.Add(xy2, cy)
+		zx2 := new(big.Rat).Mul(zx, zx)
+		zy2 := new(big.Rat).Mul(zy, zy)
+
+		r2 := new(big.Rat).Add(zx2, zy2)
+		if r2.Cmp(big.NewRat(4, 1)) > 0 {
+			return color.Gray{255 - uint8(n*17)}
+		}
+
+		xy := new(big.Rat).Mul(zx, zy)
+		xy.Add(xy, xy)
+
+		zx.Sub(zx2, zy2).Add(zx, cx)
+		zy.Add(xy, cy)
 	}
 
 	return color.Black
