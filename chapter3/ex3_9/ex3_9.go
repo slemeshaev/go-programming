@@ -28,9 +28,23 @@ func main() {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	// parse query parameters with defaults
-	x, _ := strconv.ParseFloat(r.URL.Query().Get("x"), 64)
-	y, _ := strconv.ParseFloat(r.URL.Query().Get("y"), 64)
-	zoom, _ := strconv.ParseFloat(r.URL.Query().Get("zoom"), 64)
+	x, err := strconv.ParseFloat(r.URL.Query().Get("x"), 64)
+	if err != nil {
+		log.Printf("Error parsing x parameter %v:", err)
+		return
+	}
+
+	y, err := strconv.ParseFloat(r.URL.Query().Get("y"), 64)
+	if err != nil {
+		log.Printf("Error parsing y parameter %v:", err)
+		return
+	}
+
+	zoom, err := strconv.ParseFloat(r.URL.Query().Get("zoom"), 64)
+	if err != nil {
+		log.Printf("Error parsing zoom parameter %v:", err)
+		return
+	}
 
 	// set defaults
 	if x == 0 && y == 0 {
