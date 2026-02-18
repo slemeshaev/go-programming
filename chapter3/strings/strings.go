@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"unicode/utf8"
+)
 
 func HasPrefix(s, prefix string) bool {
 	return len(s) >= len(prefix) && s[:len(prefix)] == prefix
@@ -55,4 +58,8 @@ func main() {
 
 	fmt.Println(Contains(s, "o,")) // true
 	fmt.Println(Contains(s, "xf")) // false
+
+	str := "Hello, 世界"
+	fmt.Println(len(str))                    // "13"
+	fmt.Println(utf8.RuneCountInString(str)) // "9"
 }
