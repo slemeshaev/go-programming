@@ -62,4 +62,11 @@ func main() {
 	str := "Hello, 世界"
 	fmt.Println(len(str))                    // "13"
 	fmt.Println(utf8.RuneCountInString(str)) // "9"
+
+	// the clumsy solution
+	for i := 0; i < len(str); {
+		r, size := utf8.DecodeRuneInString(str[i:])
+		fmt.Printf("%d\t%c\n", i, r)
+		i += size
+	}
 }
