@@ -69,4 +69,13 @@ func main() {
 		fmt.Printf("%d\t%c\n", i, r)
 		i += size
 	}
+
+	for i, r := range "Hello, 世界" {
+		fmt.Printf("%d\t%q\t%d\n", i, r, r)
+	}
+
+	n := 0
+	for range str {
+		n++
+	}
 }
