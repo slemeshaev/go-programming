@@ -86,8 +86,10 @@ func main() {
 	jr := []rune(js)
 	fmt.Printf("%x\n", jr) // [30d7 30ed 30b0 30e9 30e0]
 
-	fmt.Println(string(jr))      // プログラム
-	fmt.Println(string(65))      // A
-	fmt.Println(string(0x4eac))  // 京
-	fmt.Println(string(1234567)) // �
+	fmt.Println(string(jr)) // プログラム
+
+	// conversion from untyped int to string yields a string of one rune, not a string of digits
+	// fmt.Println(string(65))      // A
+	// fmt.Println(string(0x4eac))  // 京
+	// fmt.Println(string(1234567)) // �
 }
