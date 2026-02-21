@@ -78,4 +78,16 @@ func main() {
 	for range str {
 		n++
 	}
+
+	// "program" in Japanese katakana
+	js := "プログラム"
+	fmt.Printf("% x\n", js) // e3 83 97 e3 83 ad e3 82 b0 e3 83 a9 e3 83 a0
+
+	jr := []rune(js)
+	fmt.Printf("%x\n", jr) // [30d7 30ed 30b0 30e9 30e0]
+
+	fmt.Println(string(jr))      // プログラム
+	fmt.Println(string(65))      // A
+	fmt.Println(string(0x4eac))  // 京
+	fmt.Println(string(1234567)) // �
 }
