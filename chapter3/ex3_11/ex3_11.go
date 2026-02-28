@@ -6,6 +6,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"strings"
 )
 
 func commaInteger(s string) string {
@@ -31,8 +32,28 @@ func commaInteger(s string) string {
 }
 
 func comma(s string) string {
-	// implementation
-	return s
+	if len(s) == 0 {
+		return s
+	}
+
+	var buf bytes.Buffer
+	start := 0
+
+	if s[0] == '+' || s[0] == '-' {
+		buf.WriteByte(s[0])
+		start = 1
+	}
+
+	dotIndex := strings.Index(s[start:], ".")
+	if dotIndex == -1 {
+		buf.WriteString(commaInteger(s[start:]))
+	} else {
+		dotIndex += start
+		buf.WriteString(commaInteger(s[start:dotIndex]))
+		buf.WriteString(s[dotIndex:])
+	}
+
+	return buf.String()
 }
 
 func main() {
