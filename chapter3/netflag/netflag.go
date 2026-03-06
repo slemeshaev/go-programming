@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Flags uint
 
 const (
@@ -27,5 +29,13 @@ func IsCast(v Flags) bool {
 }
 
 func main() {
-	// examples...
+	var v Flags = FlagMulticast | FlagUp
+	fmt.Printf("%b %t\n", v, IsUp(v)) // "10001 true"
+
+	TurnDown(&v)
+	fmt.Printf("%b %t\n", v, IsUp(v)) // "10000 false"
+
+	SetBroadcast(&v)
+	fmt.Printf("%b %t\n", v, IsUp(v))   // "10010 false"
+	fmt.Printf("%b %t\n", v, IsCast(v)) // "10010 true"
 }
