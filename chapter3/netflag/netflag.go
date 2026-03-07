@@ -12,6 +12,18 @@ const (
 	FlagMulticast
 )
 
+const (
+	_ = 1 << (10 * iota)
+	KiB
+	MiB
+	GiB
+	TiB
+	PiB
+	EiB
+	ZiB
+	YiB
+)
+
 func IsUp(v Flags) bool {
 	return v&FlagUp == FlagUp
 }
@@ -38,4 +50,13 @@ func main() {
 	SetBroadcast(&v)
 	fmt.Printf("%b %t\n", v, IsUp(v))   // "10010 false"
 	fmt.Printf("%b %t\n", v, IsCast(v)) // "10010 true"
+
+	fmt.Printf("KiB = %d\n", KiB)
+	fmt.Printf("MiB = %d\n", MiB)
+	fmt.Printf("GiB = %d\n", GiB)
+	fmt.Printf("TiB = %d\n", TiB)
+	fmt.Printf("PiB = %d\n", PiB)
+	fmt.Printf("EiB = %d\n", EiB)
+	// fmt.Printf("ZiB = %d", ZiB) // превышает 1 << 64
+	// fmt.Printf("YiB = %d", YiB)
 }
