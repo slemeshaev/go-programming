@@ -57,6 +57,7 @@ func main() {
 	fmt.Printf("TiB = %d\n", TiB)
 	fmt.Printf("PiB = %d\n", PiB)
 	fmt.Printf("EiB = %d\n", EiB)
-	// fmt.Printf("ZiB = %d", ZiB) // превышает 1 << 64
-	// fmt.Printf("YiB = %d", YiB)
+
+	fmt.Printf("ZiB = %g\n", float64(ZiB)) // 1 << 70
+	fmt.Printf("YiB = %g\n", float64(YiB)) // 1 << 80
 }
