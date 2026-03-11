@@ -16,4 +16,9 @@ func main() {
 	for _, v := range a {
 		fmt.Printf("%d\n", v)
 	}
+
+	var q [3]int = [3]int{1, 2, 3}
+	var r [3]int = [3]int{1, 2}
+	fmt.Println(r[2]) // 0
+	fmt.Println(q[2]) // 3
 }
