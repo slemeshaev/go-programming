@@ -30,4 +30,8 @@ func main() {
 			}
 		}
 	}
+
+	fmt.Println(summer[:20])    // panic: out of range
+	endlessSummer := summer[:5] // extend a slice (within capacity)
+	fmt.Println(endlessSummer)  // "[June July August September October]"
 }
