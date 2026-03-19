@@ -18,6 +18,7 @@ func main() {
 	// Rotate s left by two positions
 	reverse(s[:2])
 	reverse(s[2:])
+	// cannot use s (variable of type [6]int) as []int value in argument to reverse
 	reverse(s[:])
 	fmt.Println(s) // [2 3 4 5 0 1]
 }
