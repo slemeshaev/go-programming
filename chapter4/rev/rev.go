@@ -18,6 +18,6 @@ func main() {
 	// Rotate s left by two positions
 	reverse(s[:2])
 	reverse(s[2:])
-	// reverse(s)
+	reverse(s[:])
 	fmt.Println(s) // [2 3 4 5 0 1]
 }
