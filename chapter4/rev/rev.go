@@ -9,6 +9,20 @@ func reverse(s []int) {
 	}
 }
 
+func equal(x, y []string) bool {
+	if len(x) != len(y) {
+		return false
+	}
+
+	for i := range x {
+		if x[i] != y[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
 func main() {
 	a := [...]int{0, 1, 2, 3, 4, 5}
 	reverse(a[:])
