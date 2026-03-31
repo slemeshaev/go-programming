@@ -16,19 +16,25 @@ func reverseBytes(b []byte) {
 }
 
 func reverseUTF8(b []byte) []byte {
-	if len(b) == 0 {
-		return b
-	}
-
-	reverseBytes(b)
-
+	runes := make([]rune, 0, utf8.RuneCount(b))
 	for i := 0; i < len(b); {
-		_, size := utf8.DecodeRune(b[i:])
-		reverseBytes(b[i : i+size])
+		r, size := utf8.DecodeRune(b[i:])
+		runes = append(runes, r)
 		i += size
 	}
 
-	return b
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+
+	result := make([]byte, 0, len(b))
+	for _, r := range runes {
+		buf := make([]byte, utf8.RuneLen(r))
+		utf8.EncodeRune(buf, r)
+		result = append(result, buf...)
+	}
+
+	return result
 }
 
 func main() {
