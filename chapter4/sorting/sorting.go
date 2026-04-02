@@ -9,6 +9,7 @@ func main() {
 	var names []string
 
 	ages := make(map[string]int)
+	ages["bob"] = 43
 	ages["alice"] = 31
 	ages["charlie"] = 34
 
