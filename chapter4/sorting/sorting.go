@@ -5,6 +5,20 @@ import (
 	"sort"
 )
 
+func equal(x, y map[string]int) bool {
+	if len(x) != len(y) {
+		return false
+	}
+
+	for k, xv := range x {
+		if yv, ok := y[k]; !ok || yv != xv {
+			return false
+		}
+	}
+
+	return true
+}
+
 func main() {
 	ages := make(map[string]int)
 	ages["alice"] = 31
@@ -33,4 +47,6 @@ func main() {
 	} else {
 		fmt.Printf("%s is a key in this map %d\n", "alice", age)
 	}
+
+	fmt.Println(equal(map[string]int{"A": 42}, map[string]int{"B": 42}))
 }
