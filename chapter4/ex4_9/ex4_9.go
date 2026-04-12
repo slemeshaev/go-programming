@@ -5,8 +5,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -23,4 +25,55 @@ func main() {
 		os.Exit(1)
 	}
 	defer file.Close()
+
+	freq := make(map[string]int)
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanWords)
+
+	for scanner.Scan() {
+		word := scanner.Text()
+		word = strings.ToLower(word)
+		word = strings.Trim(word, ".,!?;:()[]{}'\"`")
+
+		if word != "" {
+			freq[word]++
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintf(os.Stderr, "wordfreq: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Println("Word frequencies (case-insensitive):")
+	fmt.Println("-----------------------------------")
+
+	words := make([]string, 0, len(freq))
+	for word := range freq {
+		words = append(words, word)
+	}
+
+	// sorting words
+	for i := 0; i < len(words)-1; i++ {
+		for j := i + 1; j < len(words); j++ {
+			if words[i] > words[j] {
+				words[i], words[j] = words[j], words[i]
+			}
+		}
+	}
+
+	// printing
+	for _, word := range words {
+		fmt.Printf("%-20s %d\n", word, freq[word])
+	}
+
+	fmt.Println("-----------------------------------")
+	fmt.Printf("Total unique words: %d\n", len(freq))
+
+	total := 0
+	for _, count := range freq {
+		total += count
+	}
+	fmt.Printf("Total words: %d\n", total)
 }

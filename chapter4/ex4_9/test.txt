@@ -1,0 +1,4 @@
+Hello world! Hello Go.
+Go is awesome. Is Go awesome?
+Yes, Go is awesome!!!
+Hello, hello, hello!
