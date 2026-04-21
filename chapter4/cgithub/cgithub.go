@@ -1,4 +1,6 @@
-package github
+// Package github provides a Go API for the GitHub issue tracker.
+// See https://developer.github.com/v3/search/#search-issues.
+package cgithub
 
 import (
 	"encoding/json"
