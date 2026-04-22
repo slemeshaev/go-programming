@@ -1,7 +1,9 @@
+// Issues prints a table of Github issues matching the search terms.
 package main
 
 import (
 	"fmt"
+	"issues/cgithub/cgithub"
 	"log"
 	"os"
 )
@@ -14,6 +16,6 @@ func main() {
 
 	fmt.Printf("%d issues:\n", result.TotalCount)
 	for _, item := range result.Items {
-		fmt.Printf("#%-5d %9.9s %.55s\n", item.Number, item.User.login, &item.Title)
+		fmt.Printf("#%-5d %9.9s %.55s\n", item.Number, item.User.Login, item.Title)
 	}
 }
