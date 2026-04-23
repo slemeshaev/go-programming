@@ -1,4 +1,6 @@
-// Issues prints a table of Github issues matching the search terms.
+// Exercise 4.10: Modify issues to report the results in age categories, say less than a month old,
+// less than a year old, and more than a year old.
+
 package main
 
 import (
@@ -9,7 +11,6 @@ import (
 )
 
 func main() {
-
 	result, err := cgithub.SearchIssues(os.Args[1:])
 	if err != nil {
 		log.Fatal(err)
