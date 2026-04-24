@@ -8,16 +8,45 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 )
 
+const (
+	lessThanMonth = iota
+	lessThanYear
+	moreThanYear
+)
+
+var categories = []string{
+	"Less than a month old",
+	"Less than a year old",
+	"More than a year old",
+}
+
 func main() {
+	if len(os.Args) != 2 {
+		fmt.Fprintf(os.Stderr, "usage: issues <query>\n")
+		os.Exit(1)
+	}
+
 	result, err := cgithub.SearchIssues(os.Args[1:])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("%d issues:\n", result.TotalCount)
+	issues := make([][]*cgithub.Issue, 3)
+	now := time.Now()
+
 	for _, item := range result.Items {
-		fmt.Printf("#%-5d %9.9s %.55s\n", item.Number, item.User.Login, item.Title)
+		age := now.Sub(item.CreatedAt)
+
+		switch {
+		case age < 30*24*time.Hour:
+			issues[lessThanMonth] = append(issues[lessThanMonth], item)
+		case age < 365*24*time.Hour:
+			issues[lessThanYear] = append(issues[lessThanYear], item)
+		default:
+			issues[moreThanYear] = append(issues[moreThanYear], item)
+		}
 	}
 }
