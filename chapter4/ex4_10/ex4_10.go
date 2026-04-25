@@ -49,4 +49,17 @@ func main() {
 			issues[moreThanYear] = append(issues[moreThanYear], item)
 		}
 	}
+
+	for i, category := range categories {
+		if len(issues[i]) == 0 {
+			fmt.Printf("\n=== %s ===\nNo issues found.\n", category)
+			continue
+		}
+
+		fmt.Printf("\n=== %s ===\n", category)
+		for _, issue := range issues[i] {
+			age := time.Since(issue.CreatedAt)
+			fmt.Printf("#%-5d %10.0f days ago %9s %s\n", issue.Number, age.Hours()/24, issue.User.Login, issue.Title)
+		}
+	}
 }
