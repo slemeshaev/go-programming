@@ -4,7 +4,6 @@
 package main
 
 import (
-	"chapter4/cgithub/cgithub"
 	"fmt"
 	"log"
 	"os"
@@ -29,12 +28,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	result, err := cgithub.SearchIssues(os.Args[1:])
+	result, err := SearchIssues(os.Args[1:])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	issues := make([][]*cgithub.Issue, 3)
+	issues := make([][]*Issue, 3)
 	now := time.Now()
 
 	for _, item := range result.Items {

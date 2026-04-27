@@ -2,15 +2,13 @@
 package main
 
 import (
-	"chapter4/cgithub/cgithub"
 	"fmt"
 	"log"
 	"os"
 )
 
 func main() {
-
-	result, err := cgithub.SearchIssues(os.Args[1:])
+	result, err := SearchIssues(os.Args[1:])
 	if err != nil {
 		log.Fatal(err)
 	}
