@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -49,7 +50,15 @@ func main() {
 }
 
 func search(query []string) {
-	// Implementation
+	result, err := SearchIssues(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, item := range result.Items {
+		format := "#%-6d\t%20.20s\t%.100s\n"
+		fmt.Printf(format, item.Number, item.User.Login, item.Title)
+	}
 }
 
 func readIssue(owner, repo, number string) {
