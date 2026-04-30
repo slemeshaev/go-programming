@@ -62,7 +62,17 @@ func search(query []string) {
 }
 
 func readIssue(owner, repo, number string) {
-	// Implementation
+	issue, err := GetIssue(owner, repo, number)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body := issue.Body
+	if body == "" {
+		body = "<empty>\n"
+	}
+
+	fmt.Printf("repo: %s/%s\nnumber: %s\nuser: %s\ntitle: %s\n\n%s", owner, repo, number, issue.User.Login, issue.Title, body)
 }
 
 func editIssue(owner, repo, number string) {
