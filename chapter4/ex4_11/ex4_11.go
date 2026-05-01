@@ -4,9 +4,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 )
 
 var usage = "%s Usage:\n\tsearch QUERY\nOr:\n\t[read|edit|close|open] OWNER REPO ISSUE_NUMBER\n"
@@ -76,7 +78,64 @@ func readIssue(owner, repo, number string) {
 }
 
 func editIssue(owner, repo, number string) {
-	// Implementation
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		editor = "vim"
+	}
+
+	editorPath, err := exec.LookPath(editor)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tempfile, err := os.CreateTemp("", "issue_crud")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer tempfile.Close()
+	defer os.Remove(tempfile.Name())
+
+	issue, err := GetIssue(owner, repo, number)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	encoder := json.NewEncoder(tempfile)
+	err = encoder.Encode(map[string]string{
+		"title": issue.Title,
+		"state": issue.State,
+		"body":  issue.Body,
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cmd := &exec.Cmd{
+		Path:   editorPath,
+		Args:   []string{editor, tempfile.Name()},
+		Stdin:  os.Stdin,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+
+	err = cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tempfile.Seek(0, 0)
+	fields := make(map[string]string)
+	if err = json.NewDecoder(tempfile).Decode(&fields); err != nil {
+		log.Fatal(err)
+	}
+
+	// Need to implement EditIssue in cgithub
+	// _, err = EditIssue(owner, repo, number, fields)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 }
 
 func openIssue(owner, repo, number string) {
