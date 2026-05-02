@@ -131,11 +131,10 @@ func editIssue(owner, repo, number string) {
 		log.Fatal(err)
 	}
 
-	// Need to implement EditIssue in cgithub
-	// _, err = EditIssue(owner, repo, number, fields)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	_, err = EditIssue(owner, repo, number, fields)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func openIssue(owner, repo, number string) {
