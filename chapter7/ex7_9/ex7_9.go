@@ -94,6 +94,11 @@ func (x byYear) Swap(i, j int) {
 
 type less func(x, y *Track) bool
 
+type Column struct {
+	name string
+	f    less
+}
+
 func colTitle(x, y *Track) bool {
 	return x.Title < y.Title
 }
@@ -116,14 +121,19 @@ func colLength(x, y *Track) bool {
 
 type byColumns struct {
 	tracks  []*Track
-	columns []less
+	columns []*Column
 }
 
 func sortByColumns(t []*Track, f ...less) *byColumns {
-	return &byColumns{
-		tracks:  t,
-		columns: f,
+	bc := &byColumns{
+		tracks: t,
 	}
+
+	for _, foo := range f {
+		bc.columns = append(bc.columns, &Column{f: foo})
+	}
+
+	return bc
 }
 
 func (x byColumns) Len() int {
@@ -143,7 +153,7 @@ func (x byColumns) Less(i, j int) bool {
 	var k int
 
 	for k = 0; k < len(x.columns)-1; k++ {
-		f := x.columns[k]
+		f := x.columns[k].f
 		switch {
 		case f(a, b):
 			return true
@@ -152,7 +162,7 @@ func (x byColumns) Less(i, j int) bool {
 		}
 	}
 
-	return x.columns[k](a, b)
+	return x.columns[k].f(a, b)
 }
 
 func useSortByColumns() []*Track {
@@ -203,34 +213,19 @@ func (h *ColumnHistory) click(col ColumnKey) {
 	h.order = newOrder
 }
 
-func (h *ColumnHistory) less() []less {
-	fs := make([]less, len(h.order))
-	for i, col := range h.order {
-		fs[i] = comparators[col]
-	}
-	return fs
-}
-
-func sortByHistory(t []*Track, h *ColumnHistory) {
-	sort.Sort(byColumns{tracks: t, columns: h.less()})
-}
-
 func main() {
 	t := tracks()
 	h := &ColumnHistory{}
 
 	fmt.Println("Click on Artist")
 	h.click(ColArtist)
-	sortByHistory(t, h)
 	printTracks(t)
 
 	fmt.Println("\nClick on Title")
 	h.click(ColTitle)
-	sortByHistory(t, h)
 	printTracks(t)
 
 	fmt.Println("\nClick on Artist")
 	h.click(ColArtist)
-	sortByHistory(t, h)
 	printTracks(t)
 }
