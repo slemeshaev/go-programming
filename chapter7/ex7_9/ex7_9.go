@@ -5,10 +5,10 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"log"
+	"net/http"
 	"sort"
-	"text/tabwriter"
+	"text/template"
 	"time"
 )
 
@@ -35,19 +35,6 @@ func length(s string) time.Duration {
 		panic(s)
 	}
 	return d
-}
-
-func printTracks(tracks []*Track) {
-	const format = "%v\t%v\t%v\t%v\t%v\t\n"
-	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 8, 2, ' ', 0)
-	fmt.Fprintf(tw, format, "Title", "Artist", "Album", "Year", "Length")
-	fmt.Fprintf(tw, format, "-----", "------", "-----", "-----", "-----")
-
-	for _, t := range tracks {
-		fmt.Fprintf(tw, format, t.Title, t.Artist, t.Album, t.Year, t.Length)
-	}
-
-	tw.Flush() // calculate column widths and print table
 }
 
 type byTitle []*Track
@@ -165,67 +152,96 @@ func (x byColumns) Less(i, j int) bool {
 	return x.columns[k].f(a, b)
 }
 
-func useSortByColumns() []*Track {
-	t := tracks()
-	sort.Sort(sortByColumns(t, colTitle, colArtist))
-	return t
+var tplt = template.Must(template.New("trackTable").Parse(`
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ex7.9</title>
+      <style>
+        table {
+	      border-collapse: collapse;
+        }
+        td, th {
+	      border: solid 1px;
+	      padding: 0.5em;
+          text-align: right;
+        }
+      </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+	    <th><a href="./?by=title">Title</a></th>
+	    <th><a href="./?by=artist">Artist</a></th>
+	    <th><a href="./?by=album">Album</a></th>
+	    <th><a href="./?by=year">Year</a></th>
+	    <th><a href="./?by=length">Length</a></th>
+	  </tr>
+      {{range .}}
+      <tr>
+        <td>{{.Title}}</td>
+        <td>{{.Artist}}</td>
+        <td>{{.Album}}</td>
+        <td>{{.Year}}</td>
+        <td>{{.Length}}</td>
+      </tr>
+      {{end}}
+    </table>
+  </body>
+</html>
+`))
+
+func (x *byColumns) doSort(w http.ResponseWriter, req *http.Request) {
+	col := req.URL.Query().Get("by")
+	if col != "" {
+		x.selected(col)
+		sort.Sort(x)
+	}
+
+	if err := tplt.Execute(w, x.tracks); err != nil {
+		log.Fatal(err)
+	}
 }
 
-func useSortStable() []*Track {
-	t := tracks()
-	sort.Stable(byArtist(t))
-	sort.Stable(byTitle(t))
-	return t
-}
+func (x *byColumns) selected(s string) {
+	var f less
 
-type ColumnKey int
+	switch s {
+	case "title":
+		f = colTitle
+	case "artist":
+		f = colArtist
+	case "album":
+		f = colAlbum
+	case "year":
+		f = colYear
+	case "length":
+		f = colLength
+	default:
+		s = "title"
+		f = colTitle
+	}
 
-const (
-	ColTitle ColumnKey = iota
-	ColArtist
-	ColAlbum
-	ColYear
-	ColLength
-)
+	for i, c := range x.columns {
+		if c.name == s {
+			if i != 0 {
+				x.columns[0], x.columns[i] = x.columns[i], x.columns[0]
+			}
 
-var comparators = map[ColumnKey]less{
-	ColTitle:  colTitle,
-	ColArtist: colArtist,
-	ColAlbum:  colAlbum,
-	ColYear:   colYear,
-	ColLength: colLength,
-}
-
-type ColumnHistory struct {
-	order []ColumnKey
-}
-
-func (h *ColumnHistory) click(col ColumnKey) {
-	newOrder := make([]ColumnKey, 0, len(h.order)+1)
-	newOrder = append(newOrder, col)
-
-	for _, c := range h.order {
-		if c != col {
-			newOrder = append(newOrder, c)
+			return
 		}
 	}
 
-	h.order = newOrder
+	x.columns = append(x.columns, &Column{f: f, name: s})
+	i := len(x.columns) - 1
+
+	if i != 0 {
+		x.columns[0], x.columns[i] = x.columns[i], x.columns[0]
+	}
 }
 
 func main() {
-	t := tracks()
-	h := &ColumnHistory{}
-
-	fmt.Println("Click on Artist")
-	h.click(ColArtist)
-	printTracks(t)
-
-	fmt.Println("\nClick on Title")
-	h.click(ColTitle)
-	printTracks(t)
-
-	fmt.Println("\nClick on Artist")
-	h.click(ColArtist)
-	printTracks(t)
+	t := sortByColumns(tracks())
+	http.HandleFunc("/", t.doSort)
+	log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
