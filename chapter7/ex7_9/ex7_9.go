@@ -5,10 +5,11 @@
 package main
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"sort"
-	"text/template"
+	"sync"
 	"time"
 )
 
@@ -35,48 +36,6 @@ func length(s string) time.Duration {
 		panic(s)
 	}
 	return d
-}
-
-type byTitle []*Track
-
-func (x byTitle) Len() int {
-	return len(x)
-}
-
-func (x byTitle) Less(i, j int) bool {
-	return x[i].Title < x[j].Title
-}
-
-func (x byTitle) Swap(i, j int) {
-	x[i], x[j] = x[j], x[i]
-}
-
-type byArtist []*Track
-
-func (x byArtist) Len() int {
-	return len(x)
-}
-
-func (x byArtist) Less(i, j int) bool {
-	return x[i].Artist < x[j].Artist
-}
-
-func (x byArtist) Swap(i, j int) {
-	x[i], x[j] = x[j], x[i]
-}
-
-type byYear []*Track
-
-func (x byYear) Len() int {
-	return len(x)
-}
-
-func (x byYear) Less(i, j int) bool {
-	return x[i].Year < x[j].Year
-}
-
-func (x byYear) Swap(i, j int) {
-	x[i], x[j] = x[j], x[i]
 }
 
 type less func(x, y *Track) bool
@@ -107,6 +66,7 @@ func colLength(x, y *Track) bool {
 }
 
 type byColumns struct {
+	mu      sync.Mutex
 	tracks  []*Track
 	columns []*Column
 }
@@ -123,15 +83,15 @@ func sortByColumns(t []*Track, f ...less) *byColumns {
 	return bc
 }
 
-func (x byColumns) Len() int {
+func (x *byColumns) Len() int {
 	return len(x.tracks)
 }
 
-func (x byColumns) Swap(i, j int) {
+func (x *byColumns) Swap(i, j int) {
 	x.tracks[i], x.tracks[j] = x.tracks[j], x.tracks[i]
 }
 
-func (x byColumns) Less(i, j int) bool {
+func (x *byColumns) Less(i, j int) bool {
 	if len(x.columns) == 0 {
 		return false
 	}
@@ -193,13 +153,20 @@ var tplt = template.Must(template.New("trackTable").Parse(`
 
 func (x *byColumns) doSort(w http.ResponseWriter, req *http.Request) {
 	col := req.URL.Query().Get("by")
+
+	x.mu.Lock()
 	if col != "" {
 		x.selected(col)
 		sort.Sort(x)
 	}
 
-	if err := tplt.Execute(w, x.tracks); err != nil {
-		log.Fatal(err)
+	snapshot := make([]*Track, len(x.tracks))
+	copy(snapshot, x.tracks)
+	x.mu.Unlock()
+
+	if err := tplt.Execute(w, snapshot); err != nil {
+		log.Printf("Template execute: %v", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}
 }
 
